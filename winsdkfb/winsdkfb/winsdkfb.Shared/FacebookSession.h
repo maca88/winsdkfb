@@ -146,6 +146,17 @@ namespace winsdkfb
             Windows::Foundation::IAsyncAction^ LogoutAsync();
 
 
+			/**
+			* Launch 'share' dialog, to post to user's timeline.
+			* @param Parameters The collection of parameters used by the feed
+			* dialog. See https://developers.facebook.com/docs/sharing/reference/share-dialog
+			* For more information.
+			* @return FBResult indicating the result of the dialog flow.
+			*/
+			Windows::Foundation::IAsyncOperation<FBResult^>^ ShowShareDialogAsync(
+				Windows::Foundation::Collections::PropertySet^ Parameters
+			);
+
             /**
              * Launch 'feed' dialog, to post to user's timeline.
              * @param Parameters The collection of parameters used by the feed

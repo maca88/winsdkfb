@@ -58,6 +58,10 @@ namespace winsdkfb
             Windows::Foundation::Collections::PropertySet^ Parameters
             );
 
+		void ShowShareDialog(
+			Windows::Foundation::Collections::PropertySet^ Parameters
+		);
+
         void ShowRequestsDialog(
             Windows::Foundation::Collections::PropertySet^ Parameters
             );
@@ -91,6 +95,8 @@ namespace winsdkfb
             Windows::Foundation::Collections::PropertySet^ Parameters
             );
 
+		Windows::Foundation::Uri^ BuildShareDialogUrl(Windows::Foundation::Collections::PropertySet^ parameters);
+
         Windows::Foundation::Uri^ BuildRequestsDialogUrl(
             Windows::Foundation::Collections::PropertySet^ Parameters
             );
@@ -108,6 +114,11 @@ namespace winsdkfb
             Windows::UI::Xaml::Controls::WebView^ sender,
             Windows::UI::Xaml::Controls::WebViewNavigationStartingEventArgs^ e
             );
+
+		void dialogWebView_ShareNavStarting(
+			Windows::UI::Xaml::Controls::WebView^ sender,
+			Windows::UI::Xaml::Controls::WebViewNavigationStartingEventArgs^ e
+		);
 
         void dialogWebView_RequestNavStarting(
             Windows::UI::Xaml::Controls::WebView^ sender,

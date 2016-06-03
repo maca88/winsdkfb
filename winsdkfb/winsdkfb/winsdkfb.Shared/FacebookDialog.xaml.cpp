@@ -188,6 +188,17 @@ void FacebookDialog::ShowFeedDialog(
         &FacebookDialog::BuildFeedDialogUrl), handler, Parameters);
 }
 
+void FacebookDialog::ShowShareDialog(
+	PropertySet^ Parameters
+)
+{
+	TypedEventHandler<WebView^, WebViewNavigationStartingEventArgs^>^ handler =
+		ref new TypedEventHandler<WebView^, WebViewNavigationStartingEventArgs^>(
+			this, &FacebookDialog::dialogWebView_ShareNavStarting);
+	ShowDialog(ref new DialogUriBuilder(this,
+		&FacebookDialog::BuildShareDialogUrl), handler, Parameters);
+}
+
 void FacebookDialog::ShowRequestsDialog(
     PropertySet^ Parameters
     )
@@ -324,6 +335,27 @@ Uri^ FacebookDialog::BuildLoginDialogUrl(
     return ref new Uri(uriString);
 }
 
+Uri^ FacebookDialog::BuildShareDialogUrl(PropertySet^ parameters)
+{
+	auto sess = FBSession::ActiveSession;
+	Platform::String^ apiVersion = L"";
+	if (sess->APIMajorVersion)
+	{
+		apiVersion = L"v" + sess->APIMajorVersion.ToString() + L"." + sess->APIMinorVersion.ToString() + L"/";
+	}
+	auto dialogUriString =
+		L"https://" + GetFBServer() +
+		L".facebook.com/" + apiVersion + L"dialog/share?app_id=" + sess->FBAppId +
+		L"&display=popup";
+	auto queryString = FBClient::ParametersToQueryString(parameters);
+	if (queryString->Length() > 0)
+	{
+		dialogUriString += "&" + queryString;
+	}
+
+	return ref new Uri(dialogUriString);
+}
+
 Uri^ FacebookDialog::BuildFeedDialogUrl(
     PropertySet^ Parameters
     )
@@ -453,6 +485,20 @@ void FacebookDialog::dialogWebView_LoginNavStarting(
         FBError^ err = FBError::FromJson(ref new String(ErrorObjectJson));
         _dialogResponse = ref new FBResult(err);
     }
+}
+
+void FacebookDialog::dialogWebView_ShareNavStarting(
+	WebView^ sender,
+	WebViewNavigationStartingEventArgs^ e
+)
+{
+	DebugPrintLine(L"Share response is " + e->Uri->DisplayUri);
+
+	if (String::CompareOrdinal(e->Uri->Path, L"/dialog/return/close") == 0)
+	{
+		_dialogResponse = ref new FBResult(true);
+		UninitDialog();
+	}
 }
 
 void FacebookDialog::dialogWebView_FeedNavStarting(
